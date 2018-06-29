@@ -30,6 +30,7 @@ def run(out_dir):
     mscl_df = _uniprot_extract('mscL', mscl_query, out_dir)
 
     df = pd.merge(arfa_df, mscl_df, left_index=True, right_index=True)
+    df.dropna(inplace=True)
     df.to_csv(os.path.join(out_dir, 'out.csv'), encoding='utf-8')
 
 
@@ -51,7 +52,7 @@ def _uniprot_extract(name, query, out_dir):
     # Read Uniprot data into Dataframe:
     df = pd.read_csv(uniprot_csv, sep='\t')
     df.name = name
-    df.set_index('Organism ID', inplace=True)
+    df.set_index(['Organism', 'Organism ID'], inplace=True)
     df.columns = pd.MultiIndex.from_tuples([[name, col] for col in df.columns])
 
     return df
