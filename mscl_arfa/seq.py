@@ -42,7 +42,7 @@ def _uniprot_extract(name, query, out_dir):
     query_str = query + \
         '&format=tab' + \
         '&columns=entry name,organism,organism-id,' + \
-        'database(GeneID),database(EMBL)'
+        'database(EMBL)'
 
     url = 'http://www.uniprot.org/uniprot/?query=' + query_str
 
