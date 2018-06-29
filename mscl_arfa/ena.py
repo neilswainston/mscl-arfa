@@ -11,7 +11,7 @@ import re
 import sys
 import xml.sax
 
-_RE = r'(\w+)\(.*:(\d+)..(\d+)\)'
+_RE = r'(\d+)\.\.(\d+)'
 
 
 class EnaHandler(xml.sax.ContentHandler):
@@ -38,10 +38,10 @@ class EnaHandler(xml.sax.ContentHandler):
     def startElement(self, name, attrs):
         if name == 'feature' and attrs.get('name', None) == 'CDS':
             location = attrs['location']
-            groups = re.match(_RE, location)
-            self.__complement = groups.group(1) == 'complement'
-            self.__start = int(groups.group(2))
-            self.__end = int(groups.group(3))
+            self.__complement = location.startswith('complement')
+            matches = re.findall(_RE, location)
+            self.__start = int(matches[0][0])
+            self.__end = int(matches[0][1])
 
 
 def parse(filename):

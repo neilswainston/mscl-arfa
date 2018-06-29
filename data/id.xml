@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ROOT request="download accessions">
+<entry accession="AAC21905" version="1" entryVersion="7" dataClass="STD" taxonomicDivision="PRO" moleculeType="genomic DNA" sequenceLength="210" topology="linear" firstPublic="2005-12-22" firstPublicRelease="86" lastUpdated="2014-05-15" lastUpdatedRelease="120">
+	<projectAccession>PRJNA219</projectAccession>
+	<description>Haemophilus influenzae Rd KW20 conserved hypothetical protein</description>
+	<reference type="article" number="1">
+		<title>Whole-genome random sequencing and assembly of Haemophilus influenzae Rd</title>
+		<author>Fleischmann R.D.</author>
+		<author>Adams M.D.</author>
+		<author>White O.</author>
+		<author>Clayton R.A.</author>
+		<author>Kirkness E.F.</author>
+		<author>Kerlavage A.R.</author>
+		<author>Bult C.J.</author>
+		<author>Tomb J.</author>
+		<author>Dougherty B.A.</author>
+		<author>Merrick J.M.</author>
+		<author>McKenney K.</author>
+		<author>Sutton G.G.</author>
+		<author>FitzHugh W.</author>
+		<author>Fields C.A.</author>
+		<author>Gocayne J.D.</author>
+		<author>Scott J.D.</author>
+		<author>Shirley R.</author>
+		<author>Liu L.I.</author>
+		<author>Glodek A.</author>
+		<author>Kelley J.M.</author>
+		<author>Weidman J.F.</author>
+		<author>Phillips C.A.</author>
+		<author>Spriggs T.</author>
+		<author>Hedblom E.</author>
+		<author>Cotton M.D.</author>
+		<author>Utterback T.</author>
+		<author>Hanna M.C.</author>
+		<author>Nguyen D.T.</author>
+		<author>Saudek D.M.</author>
+		<author>Brandon R.C.</author>
+		<author>Fine L.D.</author>
+		<author>Fritchman J.L.</author>
+		<author>Fuhrmann J.L.</author>
+		<author>Geoghagen N.S.</author>
+		<author>Gnehm C.L.</author>
+		<author>McDonald L.A.</author>
+		<author>Small K.V.</author>
+		<author>Fraser C.M.</author>
+		<author>Smith H.O.</author>
+		<author>Venter J.C.</author>
+		<journal>Science, e1252229</journal>
+		<year>1995</year>
+		<volume>269</volume>
+		<issue>5223</issue>
+		<firstPage>496</firstPage>
+		<lastPage>512</lastPage>
+		<referenceLocation>
+Science, e1252229 269(5223):496-512(1995).
+		</referenceLocation>
+		<xref db="DOI" id="10.1126/science.7542800"/>
+		<xref db="PUBMED" id="7542800"/>
+	</reference>
+	<reference type="article" number="2">
+		<title>Metabolism and evolution of Haemophilus influenzae deduced from a whole-genome comparison with Escherichia coli</title>
+		<author>Tatusov R.L.</author>
+		<author>Mushegian A.R.</author>
+		<author>Bork P.</author>
+		<author>Brown N.P.</author>
+		<author>Hayes W.S.</author>
+		<author>Borodovsky M.</author>
+		<author>Rudd K.E.</author>
+		<author>Koonin E.V.</author>
+		<journal>Curr Biol</journal>
+		<year>1996</year>
+		<volume>6</volume>
+		<issue>3</issue>
+		<firstPage>279</firstPage>
+		<lastPage>291</lastPage>
+		<referenceLocation>
+Curr Biol 6(3):279-291(1996).
+		</referenceLocation>
+		<xref db="DOI" id="10.1016/S0960-9822(02)00478-5"/>
+		<xref db="PUBMED" id="8805245"/>
+	</reference>
+	<reference type="submission" number="3">
+		<author>White O.</author>
+		<author>Clayton R.A.</author>
+		<author>Kerlavage A.R.</author>
+		<author>Fleischmann R.D.</author>
+		<submissionDate>1995-07-25</submissionDate>
+		<referenceLocation>
+Submitted (25-JUL-1995) to the INSDC.
+The Institute for Genomic Research, 9712 Medical Center Dr, Rockville, MD 20850,
+USA
+		</referenceLocation>
+	</reference>
+	<reference type="submission" number="4">
+		<author>White O.</author>
+		<author>Clayton R.A.</author>
+		<author>Kerlavage A.R.</author>
+		<author>Fleischmann R.D.</author>
+		<submissionDate>1997-09-27</submissionDate>
+		<comment>The H. influenzae sequence has been updated by R. Fleischmann. New database matches have been assigned, product names have been improved, and a number of frame shifts have been corrected. We gratefully acknowledge the work of Tatusov et. al. We have incorporated their annotation into the /notes fields of the corresponding H. influenzae genes</comment>
+		<referenceLocation>
+Submitted (27-SEP-1997) to the INSDC.
+The Institute for Genomic Research, 9712 Medical Center Dr, Rockville, MD 20850,
+USA
+		</referenceLocation>
+	</reference>
+	<reference type="submission" number="5">
+		<author>White O.</author>
+		<author>Clayton R.A.</author>
+		<author>Kerlavage A.R.</author>
+		<author>Fleischmann R.D.</author>
+		<author>Peterson J.</author>
+		<author>Hickey E.</author>
+		<author>Dodson R.</author>
+		<author>Gwinn M.</author>
+		<submissionDate>1998-05-28</submissionDate>
+		<comment>The whole genome was shifted by 588 nucleotides for a new start</comment>
+		<referenceLocation>
+Submitted (28-MAY-1998) to the INSDC.
+The Institute for Genomic Research, 9712 Medical Center Dr, Rockville, MD 20850,
+USA
+		</referenceLocation>
+	</reference>
+	<xref db="EMBL" id="L42023.1"/>
+	<xref db="MD5" id="bcd37ff87fe9116417ec885dad319a23"/>
+	<xref db="BioSample" id="SAMN02603991"/>
+	<feature name="source" location="1..210">
+		<taxon scientificName="Haemophilus influenzae Rd KW20" taxId="71421">
+			<lineage>
+				<taxon scientificName="Bacteria"/>
+				<taxon scientificName="Proteobacteria"/>
+				<taxon scientificName="Gammaproteobacteria"/>
+				<taxon scientificName="Pasteurellales"/>
+				<taxon scientificName="Pasteurellaceae"/>
+				<taxon scientificName="Haemophilus"/>
+			</lineage>
+		</taxon>
+		<qualifier name="organism">
+			<value>
+Haemophilus influenzae Rd KW20
+			</value>
+		</qualifier>
+	</feature>
+	<feature name="CDS" location="L42023.1:265624..265833">
+		<xref db="EnsemblGenomes-Gn" id="HI_0235"/>
+		<xref db="EnsemblGenomes-Tr" id="AAC21905"/>
+		<xref db="GOA" id="P44588"/>
+		<xref db="InterPro" id="IPR005589"/>
+		<xref db="UniProtKB/Swiss-Prot" id="P44588"/>
+		<qualifier name="codon_start">
+			<value>
+1
+			</value>
+		</qualifier>
+		<qualifier name="transl_table">
+			<value>
+11
+			</value>
+		</qualifier>
+		<qualifier name="locus_tag">
+			<value>
+HI_0235
+			</value>
+		</qualifier>
+		<qualifier name="product">
+			<value>
+conserved hypothetical protein
+			</value>
+		</qualifier>
+		<qualifier name="note">
+			<value>
+similar to GB:L29458 SP:P36675 PID:473421 percent identity: 73.81; identified by
+sequence similarity; putative
+			</value>
+		</qualifier>
+		<qualifier name="protein_id">
+			<value>
+AAC21905.1
+			</value>
+		</qualifier>
+		<qualifier name="translation">
+			<value>
+MRKKQKSAVENETVYLHTRGVIKDNAVMALLGDKLFRQRVEKKRKGKGSYQRKAKHPGKIFEKPDYKFF
+			</value>
+		</qualifier>
+	</feature>
+	<sequence>
+atgagaaagaaacaaaaaagtgcggttgaaaatgaaaccgtttatttgcacactcgaggc
+gtgataaaagataatgcagtgatggcattgctaggcgataaattatttcgtcagcgtgtt
+gagaaaaaacgtaaagggaaaggcagttaccaacgtaaggcgaaacacccagggaaaata
+tttgaaaagcccgattataaatttttttga
+	</sequence>
+</entry>
+</ROOT>
