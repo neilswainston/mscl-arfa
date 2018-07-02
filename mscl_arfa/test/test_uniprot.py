@@ -9,14 +9,14 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 '''
 import unittest
 
-from mscl_arfa.uniprot import get_prot_seq_ids
+from mscl_arfa.uniprot import get_gen_dna_ids
 
 
 class Test(unittest.TestCase):
     '''Test class for parser.'''
 
-    def test_get_prot_seq_ids(self):
-        '''Tests get_prot_seq_ids method.'''
-        expected = [u'AAC50125.1', u'BAA23527.1', u'AAP88775.1', u'EAW65858.1',
-                    u'EAW65856.1', u'EAW65859.1']
-        self.assertEqual(get_prot_seq_ids('P43699'), expected)
+    def test_get_gen_dna_ids(self):
+        '''Tests get_gen_dna_ids method.'''
+        expected = set([u'AAC50125.1', u'BAA23527.1', u'AAP88775.1',
+                        u'EAW65858.1', u'EAW65856.1', u'EAW65859.1'])
+        self.assertEqual(get_gen_dna_ids('P43699'), expected)

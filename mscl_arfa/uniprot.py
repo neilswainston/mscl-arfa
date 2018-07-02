@@ -7,9 +7,10 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 
 @author:  neilswainston
 '''
-import sys
-from urllib import urlopen
+import os
+from urllib import urlopen, urlretrieve
 import xml.sax
+import pandas as pd
 
 
 class UniprotHandler(xml.sax.ContentHandler):
@@ -18,31 +19,31 @@ class UniprotHandler(xml.sax.ContentHandler):
     def __init__(self):
         xml.sax.ContentHandler.__init__(self)
         self.__in_ebml = False
-        self.__prot_seq_id = None
-        self.__prot_seq_ids = []
+        self.__gen_dna_id = None
+        self.__gen_dna_ids = set([])
 
-    def get_prot_seq_ids(self):
-        '''Get protein sequence ids.'''
-        return self.__prot_seq_ids
+    def get_gen_dna_ids(self):
+        '''Get genomic DNA ids.'''
+        return self.__gen_dna_ids
 
     def startElement(self, name, attrs):
         if name == 'dbReference' and attrs.get('type', None) == 'EMBL':
             self.__in_ebml = True
         elif self.__in_ebml and name == 'property' \
                 and attrs.get('type', None) == 'protein sequence ID':
-            self.__value = attrs['value']
+            self.__gen_dna_id = attrs['value']
         elif self.__in_ebml and name == 'property' \
                 and attrs.get('type', None) == 'molecule type' \
                 and attrs.get('value', None) == 'Genomic_DNA':
-            self.__prot_seq_ids.append(self.__value)
+            self.__gen_dna_ids.add(self.__gen_dna_id)
 
     def endElement(self, name):
         if name == 'dbReference':
             self.__in_ebml = False
 
 
-def get_prot_seq_ids(uniprot_id):
-    '''Parse ENA XML file.'''
+def get_gen_dna_ids(uniprot_id):
+    '''Parse Uniprot XML file.'''
     parser = xml.sax.make_parser()
 
     handler = UniprotHandler()
@@ -50,13 +51,25 @@ def get_prot_seq_ids(uniprot_id):
     parser.parse(urlopen(
         'https://www.uniprot.org/uniprot/' + uniprot_id + '.xml'))
 
-    return handler.get_prot_seq_ids()
+    return handler.get_gen_dna_ids()
 
 
-def main(args):
-    '''main method.'''
-    print get_prot_seq_ids(args[0])
+def get_data(name, query, out_dir):
+    '''Extract data from Uniprot.'''
 
+    # Download Uniprot data for EC term:
+    uniprot_csv = os.path.join(out_dir, name + '_uniprot.tsv')
 
-if __name__ == '__main__':
-    main(sys.argv[1:])
+    query_str = query + \
+        '&format=tab' + \
+        '&columns=id,entry name,organism,organism-id'
+
+    url = 'http://www.uniprot.org/uniprot/?query=' + query_str
+
+    urlretrieve(url, uniprot_csv)
+
+    # Read Uniprot data into Dataframe:
+    df = pd.read_csv(uniprot_csv, sep='\t')
+    df.name = name
+
+    return df
