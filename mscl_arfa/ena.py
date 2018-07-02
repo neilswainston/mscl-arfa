@@ -9,8 +9,8 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 '''
 import re
 import sys
+from urllib import urlopen
 import xml.sax
-
 _RE = r'(\d+)\.\.(\d+)'
 
 
@@ -44,16 +44,25 @@ class EnaHandler(xml.sax.ContentHandler):
             self.__end = int(matches[0][1])
 
 
+def get_start_end_comp(ena_id):
+    '''Get start, end, is complement.'''
+    url = 'https://www.ebi.ac.uk/ena/data/view/%s&display=xml&download=xml' \
+        % ena_id
+    return _parse(urlopen(url))
+
+
 def parse(filename):
     '''Parse ENA XML file.'''
-    parser = xml.sax.make_parser()
+    with open(filename) as fle:
+        return _parse(fle)
 
+
+def _parse(src):
+    '''Parse source data.'''
+    parser = xml.sax.make_parser()
     handler = EnaHandler()
     parser.setContentHandler(handler)
-
-    with open(filename) as fle:
-        parser.parse(fle)
-
+    parser.parse(src)
     return handler.get_start(), handler.get_end(), handler.is_complement()
 
 

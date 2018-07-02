@@ -10,11 +10,19 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 import os
 import unittest
 
-from mscl_arfa.ena import parse
+from mscl_arfa.ena import get_start_end_comp, parse
 
 
 class Test(unittest.TestCase):
     '''Test class for parser.'''
+
+    def test_get_start_end_comp(self):
+        '''Tests get_start_end_comp method.'''
+        start, end, complement = get_start_end_comp('AAC21905')
+
+        self.assertEqual(start, 265624)
+        self.assertEqual(end, 265833)
+        self.assertEqual(complement, True)
 
     def test_parse_basic(self):
         '''Tests parse method.'''
