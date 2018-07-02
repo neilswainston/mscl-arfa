@@ -40,8 +40,10 @@ class EnaHandler(xml.sax.ContentHandler):
             location = attrs['location']
             self.__complement = location.startswith('complement')
             matches = re.findall(_RE, location)
-            self.__start = int(matches[0][0])
-            self.__end = int(matches[0][1])
+
+            if matches:
+                self.__start = int(matches[0][0])
+                self.__end = int(matches[0][1])
 
 
 def get_start_end_comp(ena_id):

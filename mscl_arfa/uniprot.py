@@ -60,13 +60,14 @@ def get_data(name, query, out_dir):
     # Download Uniprot data for EC term:
     uniprot_csv = os.path.join(out_dir, name + '_uniprot.tsv')
 
-    query_str = query + \
-        '&format=tab' + \
-        '&columns=id,entry name,organism,organism-id'
+    if not os.path.exists(uniprot_csv):
+        query_str = query + \
+            '&format=tab' + \
+            '&columns=id,entry name,organism,organism-id'
 
-    url = 'http://www.uniprot.org/uniprot/?query=' + query_str
+        url = 'http://www.uniprot.org/uniprot/?query=' + query_str
 
-    urlretrieve(url, uniprot_csv)
+        urlretrieve(url, uniprot_csv)
 
     # Read Uniprot data into Dataframe:
     df = pd.read_csv(uniprot_csv, sep='\t')
