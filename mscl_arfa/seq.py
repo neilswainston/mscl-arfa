@@ -30,8 +30,6 @@ def run(out_dir):
     df = pd.merge(arfa_df, mscl_df, left_index=True, right_index=True)
     df.dropna(inplace=True)
 
-    df = df.head()
-
     # Get start, end, is complement:
     df = _get_start_ends(df)
 
