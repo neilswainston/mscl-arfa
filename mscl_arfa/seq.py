@@ -30,10 +30,9 @@ def run(out_dir):
     df = pd.merge(arfa_df, mscl_df, left_index=True, right_index=True)
     df.dropna(inplace=True)
 
-    df = df.head()
-
     # Get start, end, is complement:
     df = _get_start_ends(df)
+    df.dropna(inplace=True)
 
     # Calculate is overlaps:
     _is_overlaps(df)
@@ -114,9 +113,12 @@ def _is_overlaps(df):
 
 def _is_overlap(left, right):
     '''Calculate whether genes overlap.'''
-    return (left[2] ^ right[2]) and \
-        bool(set(range(left[0],
-                       left[1])).intersection(range(right[0], right[1])))
+    if left[2] ^ right[2]:
+        range_left = range(int(left[0]), int(left[1]))
+        range_right = range(int(right[0]), int(right[1]))
+        return bool(set(range_left).intersection(range_right))
+
+    return False
 
 
 def main(args):
