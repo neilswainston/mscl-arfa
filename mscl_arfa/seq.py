@@ -30,6 +30,8 @@ def run(out_dir):
     df = pd.merge(arfa_df, mscl_df, left_index=True, right_index=True)
     df.dropna(inplace=True)
 
+    df = df.head()
+
     # Get start, end, is complement:
     df = _get_start_ends(df)
 
@@ -85,7 +87,7 @@ def _get_start_ends(df):
 
         start_end_df = pd.DataFrame(data, columns=cols)
 
-        df = df.merge(start_end_df)
+        df = df.reset_index().merge(start_end_df).set_index(df.index.names)
 
     return df
 
@@ -103,7 +105,8 @@ def _is_overlaps(df):
         vals = [[row[level]['start'],
                  row[level]['end'],
                  row[level]['is_complement']]
-                for level in df.columns.levels[0]]
+                for level in dict(zip(df.columns.get_level_values(0),
+                                      df.columns.get_level_values(1))).keys()]
         is_overlaps.append(_is_overlap(vals[0], vals[1]))
 
     df['overlap'] = is_overlaps
