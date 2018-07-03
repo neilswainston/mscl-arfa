@@ -77,7 +77,7 @@ def _get_start_ends(df):
     '''Get all start, end, is complement for dataframe.'''
     for level in df.columns.levels[0]:
         data = [_get_start_end(genomic_dna_id)
-                for genomic_dna_id in df[level]['genomic_dna_id']]
+                for genomic_dna_id in df[level]['genomic_dna_id'].unique()]
 
         cols = pd.MultiIndex.from_tuples([[level, column]
                                           for column in ['genomic_dna_id',
