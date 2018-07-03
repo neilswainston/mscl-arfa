@@ -22,18 +22,27 @@ def run(out_dir):
 
     # Extract data from Uniprot:
     arfa_query = 'database:(type:pfam id:PF03889)'
-    arfa_df = _get_data('arfA', arfa_query, out_dir)
+    arfa_df = _get_uniprot_data('arfA', arfa_query, out_dir)
 
     mscl_query = 'database:(type:pfam id:PF01741)'
-    mscl_df = _get_data('mscL', mscl_query, out_dir)
+    mscl_df = _get_uniprot_data('mscL', mscl_query, out_dir)
 
     df = pd.merge(arfa_df, mscl_df, left_index=True, right_index=True)
     df.dropna(inplace=True)
+
+    df = df.head()
+
+    # Get start, end, is complement:
+    df = _get_start_ends(df)
+
+    # Calculate is overlaps:
+    _is_overlaps(df)
+
     df.to_csv(os.path.join(out_dir, 'out.csv'), encoding='utf-8')
 
 
-def _get_data(name, query, out_dir):
-    '''Get data.'''
+def _get_uniprot_data(name, query, out_dir):
+    '''Get Uniprot data.'''
 
     # Get Uniprot data from API:
     df = get_data(name, query, out_dir)
@@ -58,26 +67,55 @@ def _get_data(name, query, out_dir):
     # Merge Uniprot data with genomic id data:
     df = df.merge(gen_dna_id_df, on='Entry')
 
-    # Get start, end, is complement:
-    df = df.merge(df['genomic_dna_id'].apply(_get_start_end),
-                  left_index=True, right_index=True)
-
     # Reset indices and columns:
     df.set_index(['Organism', 'Organism ID'], inplace=True)
     df.columns = pd.MultiIndex.from_tuples([[name, col] for col in df.columns])
     return df
 
 
+def _get_start_ends(df):
+    '''Get all start, end, is complement for dataframe.'''
+    for level in df.columns.levels[0]:
+        data = [_get_start_end(genomic_dna_id)
+                for genomic_dna_id in df[level]['genomic_dna_id']]
+
+        cols = pd.MultiIndex.from_tuples([[level, column]
+                                          for column in ['genomic_dna_id',
+                                                         'start',
+                                                         'end',
+                                                         'is_complement']])
+
+        start_end_df = pd.DataFrame(data, columns=cols)
+
+        df = df.merge(start_end_df)
+
+    return df
+
+
 def _get_start_end(genomic_dna_id):
     '''Get start, end, is complement from genomic DNA id.'''
-    return pd.Series(get_start_end_comp(genomic_dna_id),
-                     index=['start', 'end', 'is_complement'])
+    return [genomic_dna_id] + list(get_start_end_comp(genomic_dna_id))
+
+
+def _is_overlaps(df):
+    '''Get is overlap data.'''
+    is_overlaps = []
+
+    for _, row in df.iterrows():
+        vals = [[row[level]['start'],
+                 row[level]['end'],
+                 row[level]['is_complement']]
+                for level in df.columns.levels[0]]
+        is_overlaps.append(_is_overlap(vals[0], vals[1]))
+
+    df['overlap'] = is_overlaps
 
 
 def _is_overlap(left, right):
     '''Calculate whether genes overlap.'''
-    return left[2] ^ right[2] and \
-        set(range(left[0], left[1])).intersection(range(right[0], right[1]))
+    return (left[2] ^ right[2]) and \
+        bool(set(range(left[0],
+                       left[1])).intersection(range(right[0], right[1])))
 
 
 def main(args):
