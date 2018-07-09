@@ -7,9 +7,11 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 
 @author:  neilswainston
 '''
+# pylint: disable=invalid-name
 import os
 from urllib import urlopen, urlretrieve
 import xml.sax
+
 import pandas as pd
 
 

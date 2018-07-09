@@ -7,8 +7,10 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 
 @author:  neilswainston
 '''
+# pylint: disable=invalid-name
 import os
 import sys
+
 from mscl_arfa.ena import get_start_end_comp
 from mscl_arfa.uniprot import get_data, get_gen_dna_ids
 import pandas as pd
