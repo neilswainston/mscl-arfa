@@ -30,11 +30,9 @@ def run(out_dir):
     mscl_df = _get_uniprot_data('mscL', mscl_query, out_dir)
 
     df = pd.merge(arfa_df, mscl_df, left_index=True, right_index=True)
-    df.dropna(inplace=True)
 
     # Get start, end, is complement:
-    df = _get_start_ends(df)
-    df.dropna(inplace=True)
+    df = _get_start_ends(df, out_dir)
 
     # Calculate is overlaps:
     _is_overlaps(df)
@@ -74,21 +72,28 @@ def _get_uniprot_data(name, query, out_dir):
     return df
 
 
-def _get_start_ends(df):
+def _get_start_ends(df, out_dir):
     '''Get all start, end, is complement for dataframe.'''
-    for level in df.columns.levels[0]:
-        data = [_get_start_end(genomic_dna_id)
-                for genomic_dna_id in df[level]['genomic_dna_id'].unique()]
+    start_ends_csv = os.path.join(out_dir, 'start_ends.csv')
 
-        cols = pd.MultiIndex.from_tuples([[level, column]
-                                          for column in ['genomic_dna_id',
-                                                         'start',
-                                                         'end',
-                                                         'is_complement']])
+    if not os.path.exists(start_ends_csv):
+        for level in df.columns.levels[0]:
+            data = [_get_start_end(genomic_dna_id)
+                    for genomic_dna_id in df[level]['genomic_dna_id'].unique()]
 
-        start_end_df = pd.DataFrame(data, columns=cols)
+            cols = pd.MultiIndex.from_tuples([[level, column]
+                                              for column in ['genomic_dna_id',
+                                                             'start',
+                                                             'end',
+                                                             'is_complement']])
 
-        df = df.reset_index().merge(start_end_df).set_index(df.index.names)
+            start_end_df = pd.DataFrame(data, columns=cols)
+
+            df = df.reset_index().merge(start_end_df).set_index(df.index.names)
+
+        df.to_csv(start_ends_csv)
+    else:
+        df = pd.read_csv(start_ends_csv)
 
     return df
 
@@ -114,11 +119,12 @@ def _is_overlaps(df):
 
 
 def _is_overlap(left, right):
-    '''Calculate whether genes overlap.'''
-    if left[2] ^ right[2]:
+    '''Calculate whether genes are complementary and overlap.'''
+    if left[2] and right[2] and left[2] ^ right[2]:
         range_left = range(int(left[0]), int(left[1]))
         range_right = range(int(right[0]), int(right[1]))
-        return bool(set(range_left).intersection(range_right))
+        intersection = set(range_left).intersection(range_right)
+        return len(intersection)
 
     return False
 
