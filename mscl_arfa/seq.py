@@ -93,7 +93,7 @@ def _get_start_ends(df, out_dir):
 
         df.to_csv(start_ends_csv)
     else:
-        df = pd.read_csv(start_ends_csv)
+        df = pd.read_csv(start_ends_csv, index_col=[0, 1], header=[0, 1])
 
     return df
 
@@ -120,13 +120,13 @@ def _is_overlaps(df):
 
 def _is_overlap(left, right):
     '''Calculate whether genes are complementary and overlap.'''
-    if left[2] and right[2] and left[2] ^ right[2]:
+    if all(pd.notna(left)) and all(pd.notna(right)) and left[2] ^ right[2]:
         range_left = range(int(left[0]), int(left[1]))
         range_right = range(int(right[0]), int(right[1]))
         intersection = set(range_left).intersection(range_right)
         return len(intersection)
 
-    return False
+    return 0
 
 
 def main(args):
