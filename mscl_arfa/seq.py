@@ -8,11 +8,14 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 @author:  neilswainston
 '''
 # pylint: disable=invalid-name
+from difflib import SequenceMatcher
+import itertools
 import os
 import sys
 
 from mscl_arfa.ena import get_start_end_comp
 from mscl_arfa.uniprot import get_data, get_gen_dna_ids
+import numpy as np
 import pandas as pd
 
 
@@ -35,9 +38,11 @@ def run(out_dir):
     df = _get_start_ends(df, out_dir)
 
     # Calculate is overlaps:
-    _is_overlaps(df)
+    df = _calc_overlaps(df, out_dir)
 
-    df.to_csv(os.path.join(out_dir, 'out.csv'), encoding='utf-8')
+    df = _pair_genomic_dna_ids(df, out_dir)
+
+    _filter(df, out_dir)
 
 
 def _get_uniprot_data(name, query, out_dir):
@@ -91,7 +96,7 @@ def _get_start_ends(df, out_dir):
 
             df = df.reset_index().merge(start_end_df).set_index(df.index.names)
 
-        df.to_csv(start_ends_csv)
+        df.to_csv(start_ends_csv, encoding='utf-8')
     else:
         df = pd.read_csv(start_ends_csv, index_col=[0, 1], header=[0, 1])
 
@@ -103,23 +108,33 @@ def _get_start_end(genomic_dna_id):
     return [genomic_dna_id] + list(get_start_end_comp(genomic_dna_id))
 
 
-def _is_overlaps(df):
-    '''Get is overlap data.'''
-    is_overlaps = []
+def _calc_overlaps(df, out_dir):
+    '''Calculate overlaps.'''
+    overlaps_csv = os.path.join(out_dir, 'overlaps.csv')
 
-    for _, row in df.iterrows():
-        vals = [[row[level]['start'],
-                 row[level]['end'],
-                 row[level]['is_complement']]
-                for level in dict(zip(df.columns.get_level_values(0),
-                                      df.columns.get_level_values(1))).keys()]
-        is_overlaps.append(_is_overlap(vals[0], vals[1]))
+    if not os.path.exists(overlaps_csv):
+        is_overlaps = []
 
-    df['overlap'] = is_overlaps
+        levels = dict(zip(df.columns.get_level_values(0),
+                          df.columns.get_level_values(1))).keys()
+
+        for _, row in df.iterrows():
+            vals = [[row[level]['start'],
+                     row[level]['end'],
+                     row[level]['is_complement']]
+                    for level in levels]
+            is_overlaps.append(_calc_overlap(vals[0], vals[1]))
+
+        df['common', 'overlap'] = is_overlaps
+        df.to_csv(overlaps_csv, encoding='utf-8')
+    else:
+        df = pd.read_csv(overlaps_csv, index_col=[0, 1], header=[0, 1])
+
+    return df
 
 
-def _is_overlap(left, right):
-    '''Calculate whether genes are complementary and overlap.'''
+def _calc_overlap(left, right):
+    '''Calculate overlap if genes are on complementary strands.'''
     if all(pd.notna(left)) and all(pd.notna(right)) and left[2] ^ right[2]:
         range_left = range(int(left[0]), int(left[1]))
         range_right = range(int(right[0]), int(right[1]))
@@ -127,6 +142,60 @@ def _is_overlap(left, right):
         return len(intersection)
 
     return 0
+
+
+def _pair_genomic_dna_ids(df, out_dir):
+    paired_gen_ids_csv = os.path.join(out_dir, 'paired_gen_ids.csv')
+
+    if not os.path.exists(paired_gen_ids_csv):
+        '''Pair genomic_dna_ids.'''
+        df['common', 'gen_data_id_sim'] = \
+            df.apply(__score_gen_data_id_similarity, axis=1)
+        df.to_csv(paired_gen_ids_csv, encoding='utf-8')
+    else:
+        df = pd.read_csv(paired_gen_ids_csv, index_col=[0, 1], header=[0, 1])
+
+    return df
+
+
+def __score_gen_data_id_similarity(row):
+    '''Score genomic data id similarity.'''
+    gen_data_ids = list(row.xs('genomic_dna_id', level=1))
+
+    similarities = [SequenceMatcher(None, id_1, id_2).ratio()
+                    for id_1, id_2 in itertools.combinations(gen_data_ids, 2)]
+
+    return np.mean(similarities)
+
+
+def _filter(df, out_dir):
+    '''Filter data based on overlap > 0 and paired genomic DNA ids,
+    retaining "best" pairs per organism.'''
+    filtered_csv = os.path.join(out_dir, 'filtered.csv')
+
+    if not os.path.exists(filtered_csv):
+        series = []
+
+        filtered_df = df[df['common', 'overlap'] > 0]
+
+        for _, pairs_df in filtered_df.groupby(filtered_df.index):
+            series_df = \
+                pairs_df.sort_values(by=[('common', 'gen_data_id_sim')],
+                                     ascending=False)
+
+            series.append(series_df.iloc[0])
+
+        filtered_df = \
+            pd.DataFrame(series).sort_values(by=[('common',
+                                                  'gen_data_id_sim')],
+                                             ascending=False)
+
+        filtered_df.to_csv(filtered_csv, encoding='utf-8')
+    else:
+        filtered_df = pd.read_csv(filtered_csv,
+                                  index_col=[0, 1], header=[0, 1])
+
+    return filtered_df
 
 
 def main(args):
