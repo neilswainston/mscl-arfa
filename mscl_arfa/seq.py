@@ -145,7 +145,7 @@ def _calc_overlap(left, right):
 
 
 def _pair_genomic_dna_ids(df, out_dir):
-    paired_gen_ids_csv = os.path.join(out_dir, 'paired_gen_ids.csv')
+    paired_gen_ids_csv = os.path.join(out_dir, 'raw.csv')
 
     if not os.path.exists(paired_gen_ids_csv):
         '''Pair genomic_dna_ids.'''
