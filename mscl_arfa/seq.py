@@ -196,6 +196,9 @@ def _filter(df, out_dir):
                                                   'gen_data_id_sim')],
                                              ascending=False)
 
+        filtered_df.index = pd.MultiIndex.from_tuples(filtered_df.index,
+                                                      names=df.index.names)
+
         filtered_df.to_csv(filtered_csv, encoding='utf-8')
     else:
         filtered_df = pd.read_csv(filtered_csv,
