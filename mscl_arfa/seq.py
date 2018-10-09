@@ -8,6 +8,7 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 @author:  neilswainston
 '''
 # pylint: disable=invalid-name
+# pylint: disable=wrong-import-order
 from difflib import SequenceMatcher
 import itertools
 import os
@@ -139,16 +140,21 @@ def _calc_overlap(left, right):
         range_left = range(int(left[0]), int(left[1]))
         range_right = range(int(right[0]), int(right[1]))
         intersection = set(range_left).intersection(range_right)
-        return len(intersection)
+
+        if intersection:
+            return len(intersection)
+
+        return -min(abs(int(left[1]) - int(right[0])),
+                    abs(int(right[1]) - int(left[0])))
 
     return 0
 
 
 def _pair_genomic_dna_ids(df, out_dir):
+    '''Pair genomic_dna_ids.'''
     paired_gen_ids_csv = os.path.join(out_dir, 'raw.csv')
 
     if not os.path.exists(paired_gen_ids_csv):
-        '''Pair genomic_dna_ids.'''
         df['common', 'gen_data_id_sim'] = \
             df.apply(__score_gen_data_id_similarity, axis=1)
         df.to_csv(paired_gen_ids_csv, encoding='utf-8')
@@ -176,7 +182,7 @@ def _filter(df, out_dir):
     if not os.path.exists(filtered_csv):
         series = []
 
-        filtered_df = df[df['common', 'overlap'] > 0]
+        filtered_df = df[df['common', 'overlap'] != 0]
 
         for _, pairs_df in filtered_df.groupby(filtered_df.index):
             series_df = \
