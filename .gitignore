@@ -105,5 +105,4 @@ venv.bak/
 
 /.project
 /.pydevproject
-/out/
 /**/.DS_Store
