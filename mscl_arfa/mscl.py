@@ -10,11 +10,11 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 # pylint: disable=wrong-import-order
 import sys
 import tempfile
-from urllib.request import urlretrieve
 import xml.sax
 
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
+import requests
 
 from mscl_arfa import uniprot
 import pandas as pd
@@ -28,6 +28,8 @@ def get_seqs(in_filename, extension, out_filename):
     records = []
 
     for uniprot_id in uniprot_ids:
+        print('Extracting data for %s' % uniprot_id)
+
         try:
             for entry_id, prot_id in uniprot.get_embl_ids(uniprot_id).items():
                 seq = _get_genbank(entry_id, prot_id, extension)
@@ -46,7 +48,11 @@ def _get_genbank(entry_id, prot_id, extension, db_id='nuccore'):
         'db=%s&id=%s&rettype=gb&retmode=text' % (db_id, entry_id)
 
     tmpfile = tempfile.NamedTemporaryFile(delete='False')
-    urlretrieve(url, tmpfile.name)
+    resp = requests.get(url)
+
+    with open(tmpfile.name, 'w') as fle:
+        fle.write(resp.text)
+
     genbank = SeqIO.read(tmpfile.name, 'genbank')
     seq = genbank.seq
 
