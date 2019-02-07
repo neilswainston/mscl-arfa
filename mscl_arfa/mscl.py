@@ -7,10 +7,10 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 
 @author:  neilswainston
 '''
+# pylint: disable=broad-except
 # pylint: disable=wrong-import-order
 import sys
 import tempfile
-import xml.sax
 
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
@@ -33,10 +33,12 @@ def get_seqs(in_filename, extension, out_filename):
         try:
             for entry_id, prot_id in uniprot.get_embl_ids(uniprot_id).items():
                 seq = _get_genbank(entry_id, prot_id, extension)
-                records.append(SeqRecord(seq, id=entry_id, name=entry_id,
-                                         description=entry_id))
-        except xml.sax.SAXParseException:
-            pass
+
+                if seq:
+                    records.append(SeqRecord(seq, id=entry_id, name=entry_id,
+                                             description=entry_id))
+        except Exception:
+            print('Unable to extract sequence data for %s' % uniprot_id)
 
     with open(out_filename, 'w') as fle:
         SeqIO.write(records, fle, 'fasta')
