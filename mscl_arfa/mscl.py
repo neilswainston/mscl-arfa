@@ -63,9 +63,9 @@ def _get_genbank(entry_id, prot_id, extension, db_id='nuccore'):
                     and prot_id in feat.qualifiers.get('protein_id', [])]:
         loc = feature.location
         if loc.strand == 1:
-            return seq[loc.start:loc.end + extension]
+            return seq[loc.end:loc.end + extension]
         # else:
-        return seq[loc.start - extension:loc.end].reverse_complement()
+        return seq[loc.start - extension:loc.start].reverse_complement()
 
     return None
 
