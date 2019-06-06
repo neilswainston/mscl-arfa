@@ -9,8 +9,9 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 '''
 import re
 import sys
-from urllib import urlopen
+from urllib.request import urlopen
 import xml.sax
+
 _RE = r'(\d+)\.\.(\d+)'
 
 
@@ -70,7 +71,7 @@ def _parse(src):
 
 def main(args):
     '''main method.'''
-    print parse(args[0])
+    print(parse(args[0]))
 
 
 if __name__ == '__main__':
